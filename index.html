@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Report</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<div id="report" class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden hidden">
+    <div class="bg-indigo-800 text-white p-4 flex justify-between items-center">
+        <h1 id="scan-date" class="text-xl font-bold"></h1>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Unduh</button>
+    </div>
+    <div class="p-4">
+        <div class="bg-gray-200 p-4 rounded-lg my-2">
+            <p>Target Name</p>
+            <h3 id="target-name" class="text-green-600 font-bold text-xl"></h3>
+            <br/>
+            <p>Target Address</p>
+            <h3 id="target-address" class="text-green-600 font-bold text-xl"></h3>
+        </div>
+        <div id="nmap">
+            <h1 class="font-bold text-xl mt-5 mb-3">Nmap Report</h1>
+            <p class="text-lg">Scan result</p>
+            <table class="table-auto w-full text-left border-collapse my-4">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border p-2">Port</th>
+                        <th class="border p-2">State</th>
+                        <th class="border p-2">Service</th>
+                        <th class="border p-2">Reason</th>
+                        <th class="border p-2">Product</th>
+                        <th class="border p-2">Version</th>
+                        <th class="border p-2">Extra info</th>
+                    </tr>
+                </thead>
+                <tbody id="nmap-data">
+                </tbody>
+            </table>
+            <p class="text-lg">Explanation</p>
+            <div id="nmap-explanation"></div>
+        </div>
+        <div id="nikto">
+            <h1 class="font-bold text-xl mt-5 mb-3">Nikto Report</h1>
+            <p class="text-lg">Scan result</p>
+            <table class="w-full text-left border-collapse my-4 table-fixed">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <td class="border p-2">Uri</td>
+                        <th class="border p-2">Namelink</th>
+                        <th class="border p-2">Method</th>
+                        <th class="border p-2">Description</th>
+                    </tr>
+                </thead>
+                <tbody id="nikto-data">
+                </tbody>
+            </table>
+            <p class="text-lg">Explanation</p>
+            <div id="nikto-explanation"></div>
+        </div>
+        <div id="subfinder">
+            <h1 class="font-bold text-xl mt-5 mb-3">Subfinder</h1>
+            <ul class="m-2 list-disc list-inside" id="subfinder-data"></ul>
+        </div>
+        <div id="resume">
+            <h1 class="font-bold text-xl mt-5 mb-3">Resume AI</h1>
+            <div id="resume-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- <script>
+    const url = 'https://your-api-url.com';
+    const ip = 'your-ip-address';
+
+    const reportDiv = document.getElementById('report');
+    const loadingDiv = document.getElementById('loading');
+
+    const scanDate = document.getElementById('scan-date');
+    const targetName = document.getElementById('target-name');
+    const targetAddress = document.getElementById('target-address');
+
+    const nmapData = document.getElementById('nmap-data');
+    const nmapExplanation = document.getElementById('nmap-explanation');
+
+    const niktoData = document.getElementById('nikto-data');
+    const niktoExplanation = document.getElementById('nikto-explanation');
+
+    const subfinderData = document.getElementById('subfinder-data');
+    const resumeContent = document.getElementById('resume-content');
+
+    axios.get(`http://192.168.175.128:3000/host/telkomuniversity.ac.id`).then(res => {
+        const data = res.data.data;
+
+        scanDate.innerText = `Scan Report - Scanned at ${data.host.last_scan}`;
+        targetName.innerText = data.host.name;
+        targetAddress.innerText = data.host.host;
+
+        data.nmap_data.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="border p-2">${item.portid}</td>
+                <td class="border p-2 text-green-600">${item.state._attributes.state}</td>
+                <td class="border p-2">${item.service._attributes.name}</td>
+                <td class="border p-2">${item.state._attributes.reason}</td>
+                <td class="border p-2">${item.service._attributes.product}</td>
+                <td class="border p-2">${item.service._attributes.version}</td>
+                <td class="border p-2"></td>
+            `;
+            nmapData.appendChild(row);
+
+            if (item.hasOwnProperty('script')) {
+                if (Array.isArray(item.script)) {
+                    item.script.forEach(scriptItem => {
+                        const scriptRow = document.createElement('tr');
+                        scriptRow.innerHTML = `
+                            <td class="border p-2"></td>
+                            <td class="border p-2">${scriptItem._attributes.id}</td>
+                            <td class="border p-2">${scriptItem._attributes.output}</td>
+                            <td class="border p-2"></td>
+                            <td class="border p-2"></td>
+                            <td class="border p-2"></td>
+                            <td class="border p-2"></td>
+                        `;
+                        nmapData.appendChild(scriptRow);
+                    });
+                } else {
+                    const scriptRow = document.createElement('tr');
+                    scriptRow.innerHTML = `
+                        <td class="border p-2"></td>
+                        <td class="border p-2">${item.script._attributes.id}</td>
+                        <td class="border p-2">${item.script._attributes.output}</td>
+                        <td class="border p-2"></td>
+                        <td class="border p-2"></td>
+                        <td class="border p-2"></td>
+                        <td class="border p-2"></td>
+                    `;
+                    nmapData.appendChild(scriptRow);
+                }
+            }
+        });
+
+        if (data.explanation.nmap) {
+            data.explanation.nmap.forEach(exp => {
+                const p = document.createElement('p');
+                p.innerHTML = exp;
+                nmapExplanation.appendChild(p);
+            });
+        }
+
+        data.nikto_data.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="border p-2">${item.uri}</td>
+                <td class="border p-2">${item.namelink}</td>
+                <td class="border p-2">${item.method}</td>
+                <td class="border p-2">${item.description}</td>
+            `;
+            niktoData.appendChild(row);
+        });
+
+        if (data.explanation.nikto) {
+            data.explanation.nikto.forEach(exp => {
+                const p = document.createElement('p');
+                p.innerHTML = exp;
+                niktoExplanation.appendChild(p);
+            });
+        }
+
+        data.subfinder_data.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = item;
+            subfinderData.appendChild(li);
+        });
+
+        data.resume_ai.forEach((item, index) => {
+            const p = document.createElement('p');
+            p.innerHTML = item;
+            resumeContent.appendChild(p);
+        });
+
+        loadingDiv.style.display = 'none';
+        reportDiv.style.display = 'block';
+
+    }).catch(error => {
+        console.log(error);
+    });
+</script> -->
+
+</body>
+</html>

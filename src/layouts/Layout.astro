@@ -39,8 +39,9 @@ const { title } = Astro.props;
 		}
 		html {
 			font-family: system-ui, sans-serif;
-			color: white;
-			background: #292b2e;
+			color: black;
+			--tw-bg-opacity: 1;
+			background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 			background-size: 224px;
 		}
 		code {
@@ -53,5 +54,12 @@ const { title } = Astro.props;
 				Bitstream Vera Sans Mono,
 				Courier New,
 				monospace;
+		}
+		.close-icon {
+			filter: invert(27%) sepia(86%) saturate(6102%) hue-rotate(348deg) brightness(91%) contrast(111%);
+        }
+
+		.close-icon:hover{
+			cursor: pointer; 
 		}
 	</style>

@@ -1,0 +1,28 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import {TabScan} from '../../../components/organisms/host/Tab_scan';
+import { Suspense } from 'react';
+
+export function getStaticPaths() {
+  return [
+    {params: {ip: undefined }}
+  ]
+}
+
+const { ip } = Astro.params;
+---
+
+<Layout title=`Host ${ip}` client:load>
+    <div class="bg-gray-800 container py-4 px-28">
+      <div id="header" class="mb-10">
+        <div class="flex flex-row justify-between">
+          <h1 class="text-white font-bold text-2xl">Host {ip}</h1>
+          <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            <a target="_blank" href=`/host/${ip}/laporan`>Laporan</a>
+          </button>
+        </div>
+        
+      </div>
+      <TabScan ip={ip} client:load/>
+    </div>
+</Layout>
